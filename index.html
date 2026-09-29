@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Content Indicator</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2a10 10 0 1 0 10 10H12V2z"></path>
+                        <path d="M12 12L2.5 7.5"></path>
+                        <path d="M12 12v10"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1>AI Content Indicator</h1>
+                    <p class="subtitle">Heuristic Text Analysis & Pattern Recognition System</p>
+                </div>
+            </div>
+            <div class="header-badge">
+                <span class="pulse-dot"></span> College Project Edition
+            </div>
+        </header>
+
+        <!-- Main Content Grid -->
+        <main class="dashboard-grid">
+            
+            <!-- Left Column: Input Card -->
+            <section class="card input-card">
+                <div class="card-header">
+                    <h2>Input Text</h2>
+                    <div class="counter-group">
+                        <span id="word-count-badge" class="badge">0 words</span>
+                        <span id="char-count-badge" class="badge">0 chars</span>
+                    </div>
+                </div>
+
+                <div class="textarea-wrapper">
+                    <textarea 
+                        id="text-input" 
+                        placeholder="Paste or write your essay, article, or document here to analyze text patterns for AI likelihood..."
+                        rows="12"
+                    ></textarea>
+                </div>
+
+                <!-- Short Text Warning -->
+                <div id="short-text-warning" class="warning-banner hidden">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    <span>Please enter at least 50 words for a more meaningful analysis.</span>
+                </div>
+
+                <!-- Sample Text Shortcuts & Action Buttons -->
+                <div class="action-bar">
+                    <div class="sample-btn-group">
+                        <button type="button" id="btn-sample-ai" class="btn-secondary btn-sm">Load Sample AI Text</button>
+                        <button type="button" id="btn-sample-human" class="btn-secondary btn-sm">Load Sample Human Text</button>
+                    </div>
+
+                    <div class="main-buttons">
+                        <button type="button" id="btn-clear" class="btn-outline">Clear</button>
+                        <button type="button" id="btn-analyze" class="btn-primary">
+                            <span id="btn-text">Analyze Text</span>
+                            <div id="btn-spinner" class="spinner hidden"></div>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Column: Results Dashboard -->
+            <section class="card results-card">
+                
+                <!-- Initial Empty State -->
+                <div id="empty-state" class="empty-state">
+                    <div class="empty-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                    </div>
+                    <h3>Ready for Analysis</h3>
+                    <p>Enter text on the left and click <strong>Analyze Text</strong> to view statistical pattern metrics and AI likelihood.</p>
+                </div>
+
+                <!-- Results Output Panel -->
+                <div id="results-panel" class="results-panel hidden">
+                    
+                    <!-- Circular Score Section -->
+                    <div class="score-summary">
+                        <div class="gauge-container">
+                            <svg class="progress-ring" width="150" height="150">
+                                <circle class="progress-ring__circle-bg" stroke="#334155" stroke-width="12" fill="transparent" r="58" cx="75" cy="75"/>
+                                <circle id="progress-ring-fill" class="progress-ring__circle" stroke="#6366f1" stroke-width="12" fill="transparent" r="58" cx="75" cy="75"/>
+                            </svg>
+                            <div class="gauge-text">
+                                <span id="ai-score-percentage" class="score-value">0%</span>
+                                <span class="score-label">AI Likelihood</span>
+                            </div>
+                        </div>
+
+                        <div class="score-meta">
+                            <div id="result-status-badge" class="result-badge badge-high">
+                                High AI likelihood
+                            </div>
+                            
+                            <div class="ratio-bars">
+                                <div class="ratio-item">
+                                    <span class="ratio-title">AI Content</span>
+                                    <span id="ai-ratio-val" class="ratio-val">0%</span>
+                                </div>
+                                <div class="ratio-item">
+                                    <span class="ratio-title">Human-like</span>
+                                    <span id="human-ratio-val" class="ratio-val">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analysis Bullet Explanation -->
+                    <div class="analysis-box">
+                        <h4>Analysis Insights</h4>
+                        <ul id="analysis-insights-list" class="insights-list">
+                            <!-- Bullet items populated by script.js -->
+                        </ul>
+                    </div>
+
+                    <!-- Feature Breakdown Progress Bars -->
+                    <div class="breakdown-box">
+                        <h4>Feature Breakdown</h4>
+                        
+                        <div class="feature-item">
+                            <div class="feature-header">
+                                <span>Sentence Consistency</span>
+                                <span id="val-sentence-consistency">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div id="bar-sentence-consistency" class="bar-fill" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="feature-item">
+                            <div class="feature-header">
+                                <span>Vocabulary Diversity</span>
+                                <span id="val-vocab-diversity">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div id="bar-vocab-diversity" class="bar-fill" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="feature-item">
+                            <div class="feature-header">
+                                <span>Repetition</span>
+                                <span id="val-repetition">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div id="bar-repetition" class="bar-fill" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="feature-item">
+                            <div class="feature-header">
+                                <span>Formal Language</span>
+                                <span id="val-formal-language">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div id="bar-formal-language" class="bar-fill" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="feature-item">
+                            <div class="feature-header">
+                                <span>Predictability</span>
+                                <span id="val-predictability">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div id="bar-predictability" class="bar-fill" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mandatory Disclaimer Box -->
+                    <div class="disclaimer-callout">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        <p><strong>Important:</strong> This tool provides an AI-likelihood estimate based on text patterns and should not be treated as definitive proof of AI generation.</p>
+                    </div>
+
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Application Javascript -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
